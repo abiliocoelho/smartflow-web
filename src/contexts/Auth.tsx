@@ -1,6 +1,10 @@
 import { ReactNode, createContext, useEffect, useState } from 'react'
 import { UserDTO } from '../dto/UserDTO'
-import { storageUserGet } from '../storage/UserStorage'
+import {
+  storageUserGet,
+  storageUserRemove,
+  storageUserSave,
+} from '../storage/UserStorage'
 import { api } from '../services/api'
 import { useNavigate } from 'react-router-dom'
 
@@ -25,11 +29,10 @@ export function AuthProvider({ children }: Props) {
   async function loadUserData() {
     try {
       setIsLoadingUserStorageData(true)
-
       const userLogged = await storageUserGet()
-
       if (userLogged) {
         setUser(userLogged)
+        navigate('/dashboard')
       }
     } catch (error) {
       console.log(error)
@@ -49,11 +52,15 @@ export function AuthProvider({ children }: Props) {
         password,
       })
       setUser(response.data as UserDTO)
+      storageUserSave(response.data)
       navigate('/dashboard')
     } catch (error) {}
   }
   async function signOut() {
+    setIsLoadingUserStorageData(true)
+    storageUserRemove()
     setUser(null)
+    setIsLoadingUserStorageData(false)
   }
   return (
     <AuthContext.Provider
