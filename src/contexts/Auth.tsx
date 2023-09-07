@@ -30,7 +30,7 @@ export function AuthProvider({ children }: Props) {
     try {
       setIsLoadingUserStorageData(true)
       const userLogged = await storageUserGet()
-      if (userLogged) {
+      if (userLogged.token) {
         setUser(userLogged)
         navigate('/dashboard')
       }

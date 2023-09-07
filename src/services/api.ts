@@ -1,5 +1,18 @@
 import axios from 'axios'
-
-export const api = axios.create({
-  baseURL: 'http://192.168.0.10:3333',
+import { storageUserGet } from '../storage/UserStorage'
+const api = axios.create({
+  baseURL: 'http://localhost:3333',
 })
+
+api.interceptors.request.use(
+  async (request) => {
+    const { token } = await storageUserGet()
+    if (token) {
+      request.headers.Authorization = `Bearer ${token}`
+    }
+    return request
+  },
+  (error) => Promise.reject(error),
+)
+
+export { api }

@@ -7,9 +7,7 @@ export async function storageUserSave(user: UserDTO) {
 
 export async function storageUserGet() {
   const storage = await localStorage.getItem(USER_STORAGE)
-
-  const user: UserDTO = storage ? JSON.parse(storage) : null
-
+  const user: UserDTO = storage ? JSON.parse(storage) : {}
   return user
 }
 
