@@ -50,7 +50,7 @@ export function Dashboard() {
           Sair
         </button>
       </aside>
-      <main className="col-span-10 bg-zinc-950 p-4 row-span-5 rounded">
+      <main className="col-span-10 bg-zinc-950 p-4 row-span-5 rounded overflow-y-auto">
         <Outlet />
       </main>
       <footer className="col-span-12 bg-zinc-950 p-4 row-span-1 rounded flex justify-center items-end">
