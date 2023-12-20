@@ -82,7 +82,7 @@ export function SignIn() {
               className="h-10 bg-emerald-700 rounded hover:bg-emerald-800 text-zinc-200 font-semibold"
               type="submit"
             >
-              Salvar
+              Entrar
             </button>
           </form>
         </main>

@@ -4,8 +4,6 @@ import { SignIn } from '../pages/SignIn'
 import { Dashboard } from '../pages/Dashboard'
 import { ProtectedRoute } from './ProtectedRoute'
 import { NotFound } from '../pages/NotFound'
-import { Publisher } from '../pages/Publisher'
-import { Transit } from '../pages/Transit'
 
 export function Routes() {
   return (
@@ -18,10 +16,7 @@ export function Routes() {
             <Dashboard />
           </ProtectedRoute>
         }
-      >
-        <Route path="transit" element={<Transit />} />
-        <Route path="publish" element={<Publisher />} />
-      </Route>
+      ></Route>
       <Route path="*" element={<NotFound />} />
     </Router>
   )
