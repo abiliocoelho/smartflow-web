@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { storageUserGet } from '../storage/UserStorage'
 const api = axios.create({
-  baseURL: 'http://api.abiliocoelho.dev',
+  baseURL: 'https://api.abiliocoelho.dev',
 })
 
 api.interceptors.request.use(
