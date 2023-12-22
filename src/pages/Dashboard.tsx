@@ -18,7 +18,6 @@ export function Dashboard() {
   const [origin, setOrigin] = useState('')
   const [timer, setTimer] = useState(0)
   const [scale, setScale] = useState('')
-  const [messageToSend, setMessageToSend] = useState<Message>()
   const [messageToReceive, setMessageToReceive] = useState<Message>()
   const [timeLeft, setTimeLeft] = useState('')
   const { signOut } = useAuth()
@@ -115,9 +114,9 @@ export function Dashboard() {
     fetch('http://worldtimeapi.org/api/timezone/America/fortaleza')
       .then((data) => data.json())
       .then((response) => {
-        timeRemaining =
+        timeRemaining = messageToReceive ?
           messageToReceive?.remainingtime -
-          (response.unixtime - messageToReceive?.updated)
+          (response.unixtime - messageToReceive?.updated) : 0
       })
     const timers = setInterval(() => {
       if (timeRemaining >= 0) {
