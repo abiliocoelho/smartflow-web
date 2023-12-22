@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { connect } from 'precompiled-mqtt'
 import { ArrowFatLeft, ArrowFatRight, HandPalm } from '@phosphor-icons/react'
 import Logo from '../assets/if.png'
+import { api } from '../services/api'
 
 type Message = {
   origin: string
@@ -14,9 +15,11 @@ const MQTT_SERVER = 'mqtt://137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
-  const [scale, setScale] = useState('')
   const [origin, setOrigin] = useState('')
-  const [message, setMessage] = useState<Message>()
+  const [timer, setTimer] = useState(0)
+  const [scale, setScale] = useState('')
+  const [messageToSend, setMessageToSend] = useState<Message>()
+  const [messageToReceive, setMessageToReceive] = useState<Message>()
   const [timeLeft, setTimeLeft] = useState('')
   const { signOut } = useAuth()
 
@@ -38,6 +41,55 @@ export function Dashboard() {
     return `${dd}:${hh}:${mm}:${ss}`
   }
 
+  async function handleSend() {
+    if (origin !== '') {
+      switch (scale) {
+        case 'segundos':
+          await api.post('/state', {
+            origin,
+            remainingtime: timer,
+            updated: new Date().getTime(),
+          })
+          break
+        case 'minutos':
+          await api.post('/state', {
+            origin,
+            remainingtime: timer * 60,
+            updated: new Date().getTime(),
+          })
+          break
+        case 'horas':
+          await api.post('/state', {
+            origin,
+            remainingtime: timer * 60 * 60,
+            updated: new Date().getTime(),
+          })
+          break
+        case 'dias':
+          await api.post('/state', {
+            origin,
+            remainingtime: timer * 60 * 60 * 24,
+            updated: new Date().getTime(),
+          })
+          break
+
+        default:
+          alert('Escolha a escala de tempo')
+          break
+      }
+    } else {
+      alert('Escolha a origem')
+    }
+  }
+
+  async function handleStop() {
+    await api.post('/state', {
+      origin: 'stop',
+      remainingtime: 0,
+      updated: new Date().getTime(),
+    })
+  }
+
   useEffect(() => {
     const client = connect(MQTT_SERVER, {
       username: 'mosquitto',
@@ -51,7 +103,7 @@ export function Dashboard() {
 
     client.on('message', (topic, payload) => {
       console.log(`Recebido no tópico ${topic}: ${payload.toString()}`)
-      setMessage(JSON.parse(payload.toString()))
+      setMessageToReceive(JSON.parse(payload.toString()))
     })
 
     return () => {
@@ -59,12 +111,13 @@ export function Dashboard() {
     }
   }, [])
   useEffect(() => {
-    let timeRemaining
+    let timeRemaining: number
     fetch('http://worldtimeapi.org/api/timezone/America/fortaleza')
       .then((data) => data.json())
       .then((response) => {
         timeRemaining =
-          message?.remainingtime - (response.unixtime - message?.updated)
+          messageToReceive?.remainingtime -
+          (response.unixtime - messageToReceive?.updated)
       })
     const timers = setInterval(() => {
       if (timeRemaining >= 0) {
@@ -73,7 +126,7 @@ export function Dashboard() {
       }
     }, 1000)
     return () => clearInterval(timers)
-  }, [message])
+  }, [messageToReceive])
 
   return (
     <main className="h-screen bg-zinc-900 bg-cover bg-center bg-fixed flex flex-col justify-between items-center ">
@@ -89,18 +142,23 @@ export function Dashboard() {
       <div className="flex flex-col gap-3">
         <section className="bg-zinc-800 p-10 rounded-xl opacity-90 flex justify-around items-center">
           <h1 className="text-zinc-200 font-semibold text-lg">Timon</h1>
-          {origin === 'teresina' ? (
+          {messageToReceive?.origin === 'teresina' ? (
             <ArrowFatLeft weight="fill" color="#e4e4e7" size={32} />
-          ) : origin === 'timon' ? (
+          ) : messageToReceive?.origin === 'timon' ? (
             <ArrowFatRight weight="fill" color="#e4e4e7" size={32} />
           ) : (
             <HandPalm weight="fill" color="#ef4444" size={32} />
           )}
           <h1 className="text-zinc-200 font-semibold text-lg">Teresina</h1>
         </section>
-        <h1 className="text-center text-zinc-200 font-bold text-2xl">
-          {timeLeft}
-        </h1>
+        <div>
+          <h1 className="text-center text-red-500 font-bold text-xl leading-3">
+            DD:HH:MM:SS
+          </h1>
+          <h1 className="text-center text-zinc-200 font-bold text-2xl">
+            {timeLeft}
+          </h1>
+        </div>
 
         <section className="bg-zinc-800 p-10 rounded-xl opacity-90 flex flex-col gap-3 max-w-xs">
           <label className="text-zinc-200">
@@ -109,8 +167,10 @@ export function Dashboard() {
               className="h-10 rounded bg-zinc-700 w-full "
               onChange={(e) => setOrigin(e.target.value)}
               value={origin}
-              required
             >
+              <option disabled={true} value="">
+                Escolha
+              </option>
               <option value="teresina">Teresina</option>
               <option value="timon">Timon</option>
             </select>
@@ -124,6 +184,8 @@ export function Dashboard() {
               id="time"
               className="rounded h-10 px-3 w-full"
               placeholder="Valor"
+              value={timer}
+              onChange={(e) => setTimer(Number(e.target.value))}
             />
           </div>
           <label className="text-zinc-200">
@@ -132,8 +194,10 @@ export function Dashboard() {
               className="h-10 rounded bg-zinc-700 w-full "
               onChange={(e) => setScale(e.target.value)}
               value={scale}
-              required
             >
+              <option disabled={true} value="">
+                Escolha
+              </option>
               <option value="segundos">segundos</option>
               <option value="minutos">minutos</option>
               <option value="horas">horas</option>
@@ -142,13 +206,13 @@ export function Dashboard() {
           </label>
           <button
             className="h-10 w-full bg-emerald-500 rounded  hover:bg-emerald-600 text-zinc-200 font-semibold"
-            onClick={signOut}
+            onClick={handleSend}
           >
             Enviar
           </button>
           <button
             className="h-10 w-full bg-red-500 rounded  hover:bg-red-600 text-zinc-200 font-semibold"
-            onClick={() => setOrigin('stop')}
+            onClick={handleStop}
           >
             Parar
           </button>
