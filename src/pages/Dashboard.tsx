@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = 'mqtt://137.184.232.116:9001'
+const MQTT_SERVER = 'wss://137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
@@ -114,9 +114,10 @@ export function Dashboard() {
     fetch('http://worldtimeapi.org/api/timezone/America/fortaleza')
       .then((data) => data.json())
       .then((response) => {
-        timeRemaining = messageToReceive ?
-          messageToReceive?.remainingtime -
-          (response.unixtime - messageToReceive?.updated) : 0
+        timeRemaining = messageToReceive
+          ? messageToReceive?.remainingtime -
+            (response.unixtime - messageToReceive?.updated)
+          : 0
       })
     const timers = setInterval(() => {
       if (timeRemaining >= 0) {

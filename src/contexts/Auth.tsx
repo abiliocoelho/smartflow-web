@@ -54,7 +54,9 @@ export function AuthProvider({ children }: Props) {
       setUser(response.data as UserDTO)
       storageUserSave(response.data)
       navigate('/dashboard')
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   }
   async function signOut() {
     setIsLoadingUserStorageData(true)
