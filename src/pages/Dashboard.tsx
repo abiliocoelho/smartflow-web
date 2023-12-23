@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = 'ws://137.184.232.116:9001'
+const MQTT_SERVER = 'mqtts://137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
