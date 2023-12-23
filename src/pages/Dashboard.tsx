@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useAuth } from '../hooks/useAuth'
 import { connect } from 'precompiled-mqtt'
+import { useAuth } from '../hooks/useAuth'
 import { ArrowFatLeft, ArrowFatRight, HandPalm } from '@phosphor-icons/react'
 import Logo from '../assets/if.png'
 import { api } from '../services/api'
