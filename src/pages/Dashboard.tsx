@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { connect } from 'precompiled-mqtt'
 import { useAuth } from '../hooks/useAuth'
+import { connect } from 'precompiled-mqtt'
 import { ArrowFatLeft, ArrowFatRight, HandPalm } from '@phosphor-icons/react'
 import Logo from '../assets/if.png'
 import { api } from '../services/api'
@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = '137.184.232.116:9001'
+const MQTT_SERVER = 'wss://137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
@@ -93,7 +93,6 @@ export function Dashboard() {
     const client = connect(MQTT_SERVER, {
       username: 'mosquitto',
       password: '8PMshux16',
-      protocol: 'mqtts',
     })
 
     client.on('connect', () => {
