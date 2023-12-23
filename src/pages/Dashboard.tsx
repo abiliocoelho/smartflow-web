@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = 'mqtts://137.184.232.116:9001'
+const MQTT_SERVER = '137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
@@ -93,6 +93,7 @@ export function Dashboard() {
     const client = connect(MQTT_SERVER, {
       username: 'mosquitto',
       password: '8PMshux16',
+      protocol: 'mqtts',
     })
 
     client.on('connect', () => {
