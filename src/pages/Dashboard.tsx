@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = 'wss://137.184.232.116:9001'
+const MQTT_SERVER = 'mqtt://137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
@@ -111,7 +111,7 @@ export function Dashboard() {
   }, [])
   useEffect(() => {
     let timeRemaining: number
-    fetch('http://worldtimeapi.org/api/timezone/America/fortaleza')
+    fetch('https://worldtimeapi.org/api/timezone/America/fortaleza')
       .then((data) => data.json())
       .then((response) => {
         timeRemaining = messageToReceive
