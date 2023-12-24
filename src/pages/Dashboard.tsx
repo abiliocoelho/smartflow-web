@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = 'ws://137.184.232.116:9001'
+const MQTT_SERVER = '137.184.232.116:9001'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
@@ -90,9 +90,12 @@ export function Dashboard() {
   }
 
   useEffect(() => {
-    const client = connect(MQTT_SERVER, {
+    const client = connect({
       username: 'mosquitto',
       password: '8PMshux16',
+      protocol: 'wss',
+      host: '137.184.232.116',
+      port: 9001,
     })
 
     client.on('connect', () => {
