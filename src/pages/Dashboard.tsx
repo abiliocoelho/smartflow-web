@@ -11,7 +11,7 @@ type Message = {
   updated: number
 }
 
-const MQTT_SERVER = 'wss://api.abiliocoelho.dev:9001'
+const MQTT_SERVER = 'wss://api.abiliocoelho.dev/ws'
 const TOPIC = 'esp32_topic'
 
 export function Dashboard() {
